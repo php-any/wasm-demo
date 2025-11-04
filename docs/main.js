@@ -10,6 +10,9 @@
     "Function + return": "./snippets/functions.zy",
     "String operations": "./snippets/strings.zy",
     "Control structures": "./snippets/control.zy",
+    "Generics (Box<T>)": "./snippets/generics.zy",
+    "Database (ORM + SQL)": "./snippets/database.zy",
+    "Embedded HTML": "./snippets/html_embed.zy",
   };
 
   async function bootWasm() {

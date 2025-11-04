@@ -1,0 +1,44 @@
+$title = "Hello World";
+
+// 示例数据（用于 for/if 演示）
+$features = [
+  { title: "极速", desc: "毫秒级响应" },
+  { title: "易用", desc: "直观语法" },
+  { title: "可扩展", desc: "标准库丰富" },
+];
+
+$links = [
+  { name: "GitHub", url: "https://github.com/php-any/origami", tag: "docs", note: "源码与文档" },
+  { name: "示例页", url: null, tag: "demo", note: null },
+];
+
+$html = <div class="container">
+  <h1>{$title}</h1>
+
+  <!-- if：当 features 存在且非空时渲染 -->
+  <section if="$features != null && $features->length > 0">
+    <h2>特性</h2>
+    <ul>
+      <li for="$f in $features">
+        <strong>{$f->title}</strong>
+        <span> - {$f->desc}</span>
+      </li>
+    </ul>
+  </section>
+
+  <!-- for + 绑定属性：:href / :data-tag / :aria-label -->
+  <section>
+    <h2>相关链接</h2>
+    <ul>
+      <li for="$l in $links" :data-tag="$l->tag">
+        <a :href="$l->url ?? '#'" :aria-label="$l->name">{$l->name}</a>
+        <span if="$l->note != null"> - {$l->note}</span>
+        <em if="$l->url == null">（暂不可用）</em>
+      </li>
+    </ul>
+  </section>
+</div>;
+
+echo $html;
+
+
