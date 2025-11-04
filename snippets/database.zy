@@ -1,0 +1,100 @@
+// 数据库操作示例（严格按 Origami 文档语法）
+
+use database\DB;
+use database\sql\open;
+use database\annotation\Table;
+use database\annotation\Column;
+use database\annotation\Id;
+use database\annotation\GeneratedValue;
+
+// 连接并注册为默认连接
+$db = open("mysql", "root:password@/example_db");
+$db->ping();
+database\registerDefaultConnection($db);
+
+// 定义模型
+@Table("users")
+class User {
+    @Id
+    @GeneratedValue
+    public int $id;
+
+    @Column("user_name")
+    public string $userName;
+
+    public string $email;
+    public int $age;
+    public float $coin;
+
+    @Column("created_at")
+    public string $createdAt;
+}
+
+// 插入
+$u = new User();
+$u->userName  = "张三";
+$u->email     = "zhangsan@example.com";
+$u->age       = 25;
+$u->coin      = 100.0;
+$u->createdAt = date("Y-m-d H:i:s");
+$ins = DB<User>()->insert($u);
+echo "插入成功，ID: " . $ins->lastInsertId . "\n";
+
+// 查询与条件
+$one = DB<User>()->where("id = ?", $ins->lastInsertId)->first();
+$adults = DB<User>()->where("age > ?", 18)->orderBy("age DESC")->limit(10)->get();
+echo "成年用户: " . count($adults) . "\n";
+
+// 更新
+$upd = DB<User>()->where("id = ?", $ins->lastInsertId)->update(["coin" => 500.0, "age" => 26]);
+echo "更新记录数: " . $upd->rowsAffected . "\n";
+
+// 原生 SQL（查询/执行）
+$stats = DB<User>()->query("SELECT COUNT(*) as total FROM users");
+$exec  = DB<User>()->exec(
+    "UPDATE users SET age = ? WHERE user_name = ?",
+    [30, "张三"]
+);
+echo "受影响行: " . $exec->rowsAffected . "\n";
+
+// 事务
+$conn = database\getDefaultConnection();
+$conn->begin();
+try {
+    DB<User>()->insert(["userName" => "事务用户", "age" => 20, "coin" => 10.0]);
+    $conn->commit();
+    echo "事务提交成功\n";
+} catch (Exception $e) {
+    $conn->rollback();
+    echo "事务回滚: " . $e->getMessage() . "\n";
+}
+
+// 数据库操作示例（仅演示 API 形态）
+// 注意：浏览器 WASM 环境不支持实际数据库连接；请在原生/服务器环境运行。
+
+// 假设 Origami 提供类似 DB API：db_connect / db_query / db_exec / rows->next()
+// 具体以 D:\github.cocm\php-any\origami\docs 为准。
+
+$dsn = "postgres://user:pass@localhost:5432/app?sslmode=disable";
+$db = db_connect($dsn);
+
+// 查询
+$rows = db_query($db, "SELECT id, name FROM users WHERE active = $1 LIMIT $2", [true, 5]);
+foreach ($rows as $row) {
+  echo "user: {" . $row["id"] . ", " . $row["name"] . "}\n";
+}
+
+// 事务
+$tx = db_begin($db);
+try {
+  db_exec($tx, "UPDATE users SET last_login = NOW() WHERE id = $1", [123]);
+  db_commit($tx);
+  echo "tx committed\n";
+} catch ($e) {
+  db_rollback($tx);
+  echo "tx rolled back: " . $e->message() . "\n";
+}
+
+echo "done (示例用，需非 WASM 环境)";
+
+

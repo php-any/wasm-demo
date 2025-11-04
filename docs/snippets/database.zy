@@ -1,0 +1,24 @@
+// 数据库操作示例（仅演示 API 形态）
+// 注意：浏览器 WASM 环境不支持实际数据库连接；请在原生/服务器环境运行。
+
+$dsn = "postgres://user:pass@localhost:5432/app?sslmode=disable";
+$db = db_connect($dsn);
+
+$rows = db_query($db, "SELECT id, name FROM users WHERE active = $1 LIMIT $2", [true, 5]);
+foreach ($rows as $row) {
+  echo "user: {" . $row["id"] . ", " . $row["name"] . "}\n";
+}
+
+$tx = db_begin($db);
+try {
+  db_exec($tx, "UPDATE users SET last_login = NOW() WHERE id = $1", [123]);
+  db_commit($tx);
+  echo "tx committed\n";
+} catch ($e) {
+  db_rollback($tx);
+  echo "tx rolled back: " . $e->message() . "\n";
+}
+
+return "done (示例用，需非 WASM 环境)";
+
+

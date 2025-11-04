@@ -7,4 +7,3 @@ $evens = $nums->filter(($n) => $n % 2 == 0);
 echo "doubled: ".$doubled->join(",")."\n";
 echo "evens: ".$evens->join(",")."\n";
 
-

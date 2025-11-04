@@ -9,4 +9,3 @@ function add($a: int, $b: int): int {
 $x = add(3, 5);
 echo "3 + 5 = {$x}\n";
 
-

@@ -1,0 +1,32 @@
+// 泛型示例（语法以 Origami 官方文档为准）
+// 展示：泛型函数 + 泛型容器的基本用法
+
+// 假设支持类似以下泛型声明：function map<T, U>(...): Array<U>
+// 实际语法请以 D:\github.cocm\php-any\origami\docs 为准
+
+function map<T, U>($arr: Array<T>, $fn: (T) => U): Array<U> {
+  $out = [] as Array<U>;
+  foreach ($arr as $item) {
+    $out[] = $fn($item);
+  }
+  return $out;
+}
+
+function id<T>($x: T): T {
+  return $x;
+}
+
+$nums = [1, 2, 3] as Array<int>;
+$doubled = map<int, int>($nums, ($n) => $n * 2);
+
+echo "doubled: " . $doubled->join(",") . "\n";
+
+$names = ["a", "bb", "ccc"] as Array<string>;
+$lengths = map<string, int>($names, ($s) => $s->length());
+echo "lengths: " . $lengths->join(",") . "\n";
+
+// 泛型函数 id<T>
+echo id<int>(42) . "\n";
+echo id<string>("hello") . "\n";
+
+
