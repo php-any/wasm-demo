@@ -19,5 +19,3 @@ echo "substring(2,7): '{$sub}'\n";
 $repl = $s->replace("wasm", "WASM");
 echo "replace: '{$repl}'\n";
 
-return "done";
-
