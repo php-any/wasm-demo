@@ -1,6 +1,7 @@
 # Build outputs
 /dist/
-/docs/
+## NOTE: 需要将 docs/ 提交到仓库以用于 GitHub Pages
+#/docs/
 
 # Local Go module cache (scoped to project)
 /.gomodcache/
