@@ -1,0 +1,53 @@
+name: Build docs (wasm)
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  build-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22.x'
+
+      - name: Fix line endings for shell scripts (CRLF -> LF)
+        shell: bash
+        run: |
+          if command -v dos2unix >/dev/null 2>&1; then
+            dos2unix build.sh || true
+          else
+            sed -i 's/\r$//' build.sh || true
+          fi
+
+      - name: Build wasm into docs/
+        shell: bash
+        env:
+          GOPROXY: https://proxy.golang.org,direct
+        run: |
+          bash ./build.sh
+          test -f docs/main.wasm
+
+      - name: Commit docs artifacts if changed
+        shell: bash
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if ! git diff --quiet -- docs; then
+            git add docs
+            git commit -m "build(docs): update wasm artifacts (auto)"
+            git push
+          else
+            echo "No changes in docs/"
+          fi
+
+
