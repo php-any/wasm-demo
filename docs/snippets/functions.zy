@@ -7,4 +7,3 @@ function greet($name: string): string {
 echo greet("Origami")."\n";
 greet("World"); // 返回值将显示在右侧面板
 
-

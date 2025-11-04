@@ -119,5 +119,3 @@
     await bootWasm();
   });
 })();
-
-
