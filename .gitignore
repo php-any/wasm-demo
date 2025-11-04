@@ -1,0 +1,19 @@
+# Build outputs
+/dist/
+/docs/
+
+# Local Go module cache (scoped to project)
+/.gomodcache/
+
+# WASM build artifact at root (if any)
+/main.wasm
+
+# OS/editor noise
+.DS_Store
+.vscode/
+.idea/
+*.log
+
+# Node-y things (if accidentally created)
+node_modules/
+

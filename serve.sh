@@ -17,13 +17,12 @@ if [ "$TARGET" = "dist" ]; then
   fi
   WHAT="dist/"
 else
-  REPO_ROOT="$(cd "$ROOT_DIR/../.." && pwd)"
-  OUT_DIR="$REPO_ROOT/docs/wasm"
+  OUT_DIR="$ROOT_DIR/docs"
   if [ ! -d "$OUT_DIR" ]; then
     echo "未发现 docs/wasm/，先执行 build.sh"
     "$ROOT_DIR/build.sh"
   fi
-  WHAT="docs/wasm/"
+  WHAT="docs/"
 fi
 
 cd "$OUT_DIR"

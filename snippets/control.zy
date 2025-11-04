@@ -22,5 +22,3 @@ echo "sum via foreach: {$sum2}\n";
 
 echo "fib(8) = " . fib(8) . "\n";
 
-return 0;
-

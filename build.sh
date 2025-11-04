@@ -2,9 +2,9 @@
 set -euo pipefail
 
 # 使用方法：
-#   ./build.sh                        # 默认输出到 仓库根目录/docs/wasm/（适合 GitHub Pages）
-#   ./build.sh --to-dist              # 输出到 examples/wasm/dist/
-#   （脚本将自动拉取 github.com/php-any/origami@main）
+#   ./build.sh                        # 默认输出到 仓库根目录/docs/（适合 GitHub Pages）
+#   ./build.sh --to-dist              # 输出到 仓库根目录/dist/
+#   （脚本会自动拉取 github.com/php-any/origami@main 的最新代码）
 
 # 构建到独立可部署目录
 ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -21,8 +21,7 @@ done
 if [ "$TARGET" = "dist" ]; then
   OUT_DIR="$ROOT_DIR/dist"
 else
-  REPO_ROOT="$(cd "$ROOT_DIR/../.." && pwd)"
-  OUT_DIR="$REPO_ROOT/docs/wasm"
+  OUT_DIR="$ROOT_DIR/docs"
 fi
 
 echo "==> 清理输出目录: $OUT_DIR"
@@ -31,9 +30,13 @@ mkdir -p "$OUT_DIR/snippets"
 
 echo "==> 编译 WASM"
 pushd "$ROOT_DIR" >/dev/null
-echo "==> 确保依赖使用 github.com/php-any/origami@main"
+echo "==> 确保依赖使用 github.com/php-any/origami@main（最新）"
+# 使用项目内本地模块缓存，避免全局权限/污染问题
+export GOMODCACHE="$ROOT_DIR/.gomodcache"
+# 允许用户自定义 GOPROXY；未设置时提供合理默认
+export GOPROXY="${GOPROXY:-https://proxy.golang.org,direct}"
 go mod edit -dropreplace github.com/php-any/origami 2>/dev/null || true
-go get github.com/php-any/origami@main
+go get -u github.com/php-any/origami@main
 go mod tidy
 GOOS=js GOARCH=wasm go build -o "$OUT_DIR/main.wasm" .
 popd >/dev/null
@@ -65,6 +68,6 @@ echo "==> 构建完成"
 if [ "$TARGET" = "dist" ]; then
   echo "dist/ 目录已就绪，直接部署该目录即可（例如 Nginx/静态空间）。"
 else
-  echo "docs/wasm/ 目录已就绪，可直接开启 GitHub Pages（Source: /docs）。"
+  echo "docs/ 目录已就绪，可直接开启 GitHub Pages（Source: /docs）。"
 fi
 
