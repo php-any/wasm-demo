@@ -10,8 +10,6 @@
     "Function + return": "./snippets/functions.zy",
     "String operations": "./snippets/strings.zy",
     "Control structures": "./snippets/control.zy",
-    "Generics (map/id)": "./snippets/generics.zy",
-    "Database (API demo)": "./snippets/database.zy",
   };
 
   async function bootWasm() {

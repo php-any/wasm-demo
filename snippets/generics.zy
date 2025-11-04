@@ -1,32 +1,21 @@
-// 泛型示例（语法以 Origami 官方文档为准）
-// 展示：泛型函数 + 泛型容器的基本用法
+// 类泛型示例：使用内置泛型类 DB<T>
+// 按文档，仅支持“类泛型”，不使用函数泛型
 
-// 假设支持类似以下泛型声明：function map<T, U>(...): Array<U>
-// 实际语法请以 D:\github.cocm\php-any\origami\docs 为准
+// 定义一个“类泛型” Box<T>，演示仅类泛型的写法
 
-function map<T, U>($arr: Array<T>, $fn: (T) => U): Array<U> {
-  $out = [] as Array<U>;
-  foreach ($arr as $item) {
-    $out[] = $fn($item);
-  }
-  return $out;
+class Box<T> {
+  public T $value;
 }
 
-function id<T>($x: T): T {
-  return $x;
-}
+// 使用 Box<int>
+$intBox = new Box<int>();
+$intBox->value = 42;
+echo "Box<int>: " . $intBox->value . "\n";
 
-$nums = [1, 2, 3] as Array<int>;
-$doubled = map<int, int>($nums, ($n) => $n * 2);
+// 使用 Box<string>
+$strBox = new Box<string>();
+$strBox->value = "hello";
+echo "Box<string>: " . $strBox->value . "\n";
 
-echo "doubled: " . $doubled->join(",") . "\n";
-
-$names = ["a", "bb", "ccc"] as Array<string>;
-$lengths = map<string, int>($names, ($s) => $s->length());
-echo "lengths: " . $lengths->join(",") . "\n";
-
-// 泛型函数 id<T>
-echo id<int>(42) . "\n";
-echo id<string>("hello") . "\n";
 
 
