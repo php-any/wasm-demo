@@ -69,4 +69,32 @@ try {
     echo "事务回滚: " . $e->getMessage() . "\n";
 }
 
+// 数据库操作示例（仅演示 API 形态）
+// 注意：浏览器 WASM 环境不支持实际数据库连接；请在原生/服务器环境运行。
+
+// 假设 Origami 提供类似 DB API：db_connect / db_query / db_exec / rows->next()
+// 具体以 D:\github.cocm\php-any\origami\docs 为准。
+
+$dsn = "postgres://user:pass@localhost:5432/app?sslmode=disable";
+$db = db_connect($dsn);
+
+// 查询
+$rows = db_query($db, "SELECT id, name FROM users WHERE active = $1 LIMIT $2", [true, 5]);
+foreach ($rows as $row) {
+  echo "user: {" . $row["id"] . ", " . $row["name"] . "}\n";
+}
+
+// 事务
+$tx = db_begin($db);
+try {
+  db_exec($tx, "UPDATE users SET last_login = NOW() WHERE id = $1", [123]);
+  db_commit($tx);
+  echo "tx committed\n";
+} catch ($e) {
+  db_rollback($tx);
+  echo "tx rolled back: " . $e->message() . "\n";
+}
+
+echo "done (示例用，需非 WASM 环境)";
+
 
