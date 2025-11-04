@@ -19,8 +19,3 @@ echo "substring(2,7): '{$sub}'\n";
 $repl = $s->replace("wasm", "WASM");
 echo "replace: '{$repl}'\n";
 
-<<<<<<< HEAD
-=======
-return "done";
->>>>>>> f779b88075b4ff6f3ac4e308473ff5f461975e4f
-
